@@ -29,7 +29,18 @@ class Word2Vec:
         basedir = os.getcwd()
         self.training_data_pth = training_data
         self.vocabulary_size = vocabulary_size
+        # Take all the reviews associated with the training set
+        # both pos and neg reviews
+        # for each of these files
+        # open it and read the contents into another file "all_data.txt"
         self.target = os.path.join(basedir, 'all_data.txt')
+        with open(os.path.join(self.target), "w") as fo:
+            training_set = self.training_data_pth
+            train_df = pd.read_csv(training_set, sep='\t', names=["Label", "Text"])
+            train_text = train_df["Text"]
+            for i in range(len(train_text)):
+                fo.write(train_text[i])
+                fo.write('\n')
         
     def CreateWordsFile(self):
         with open(os.path.join(target), "w") as fo:
