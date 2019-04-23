@@ -39,14 +39,14 @@ class Word2Vec:
         
     def __CreateWordsFile(self):
         with open(os.path.join(self.__target), "w") as fo:
-            training_set = self.training_data_pth
+            training_set = self.__training_data_pth
             train_df = pd.read_csv(training_set, sep= '\t', names=["Label", "Text"])
             train_text = train_df["Text"]
-            for i in rang(len(train_text)):
+            for i in range(len(train_text)):
                 fo.write(train_text[i])
                 fo.write('\n')
 
-    def get_words_text(self,basedir):
+    def __get_words_text(self,basedir):
         data_set = "all_data.txt"
         data_df = pd.read_csv(data_set,sep='\t', names=["Text"])
         data = data_df["Text"]
@@ -58,9 +58,9 @@ class Word2Vec:
         return li
     
     def build_dataset(self, basedir):
-        words = self.get_words_text(basedir)
+        words = self.__get_words_text(basedir)
         count = [['UNK', -1]]
-        count,extend(collections.Counter(words).most_common(self.vocabulary_size))
+        count.extend(collections.Counter(words).most_common(self.vocabulary_size))
         dictionary = dict()
         dictionary["<PAD>"] = len(dictionary)
         for word, _ in count:
@@ -157,10 +157,10 @@ if __name__ == '__main__':
     #num_steps = 50001  # steps to run for
     num_steps = 50001
     steps_per_checkpoint = 50 # save the params every 50 steps.
+    word2vec = Word2Vec("training-data-large.txt", 65466)
+    basedir = os.getcwd()
 
-
-
-    data, count, dictionary, reverse_dictionary = build_dataset(basedir)
+    data, count, dictionary, reverse_dictionary = word2vec.build_dataset(basedir)
     # save the dictionary to file - very important for Data Processor
     Helper.store_stuff(dictionary, "dictionary.pickle", reverse_dictionary, "reverse_dictionary.pickle")
     print('Most common words (+UNK)', count[:5])
