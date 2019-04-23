@@ -60,7 +60,7 @@ class Word2Vec:
     def build_dataset(self, basedir):
         words = self.__get_words_text(basedir)
         count = [['UNK', -1]]
-        count.extend(collections.Counter(words).most_common(self.vocabulary_size))
+        count.extend(collections.Counter(words).most_common(self.__vocabulary_size))
         dictionary = dict()
         dictionary["<PAD>"] = len(dictionary)
         for word, _ in count:
@@ -116,7 +116,7 @@ class Word2Vec:
     def batch_tester(self, data, reverse_dictionary):
         print('data:', [reverse_dictionary[di] for di in data[:8]])
         for num_skips, skip_window in [(2, 1), (4, 2)]:
-            batch, labels = generate_batch(data, batch_size=8, num_skips=num_skips, skip_window=skip_window)
+            batch, labels = self.generate_batch(data, batch_size=8, num_skips=num_skips, skip_window=skip_window)
             print('\nwith num_skips = %d and skip_window = %d:' % (num_skips, skip_window))
             print('    batch:', [reverse_dictionary[bi] for bi in batch])
             print('    labels:', [reverse_dictionary[li] for li in labels.reshape(8)])
@@ -145,6 +145,7 @@ if __name__ == '__main__':
     embedding_size = 128  # Dimension of the embedding vector.
     skip_window = 1  # How many words to consider left and right - context size
     num_skips = 2  # How many times to reuse an input to generate a label
+    vocabulary_size = 65466
     # TAKEN FROM TF WEBSITE EXAMPLE:
     # We pick a random validation set to sample nearest neighbors. here we limit the
     # validation samples to the words that have a low numeric ID, which by
@@ -157,7 +158,7 @@ if __name__ == '__main__':
     #num_steps = 50001  # steps to run for
     num_steps = 50001
     steps_per_checkpoint = 50 # save the params every 50 steps.
-    word2vec = Word2Vec("training-data-large.txt", 65466)
+    word2vec = Word2Vec("training-data-large.txt", vocabulary_size)
     basedir = os.getcwd()
 
     data, count, dictionary, reverse_dictionary = word2vec.build_dataset(basedir)
@@ -165,7 +166,7 @@ if __name__ == '__main__':
     Helper.store_stuff(dictionary, "dictionary.pickle", reverse_dictionary, "reverse_dictionary.pickle")
     print('Most common words (+UNK)', count[:5])
     print('Sample data', data[:10])
-    batch_tester(data, reverse_dictionary)
+    word2vec.batch_tester(data, reverse_dictionary)
     print('three index', dictionary['X773579'])
 
     ckpt_path = os.path.join(basedir, 'checkpoints')
@@ -186,7 +187,7 @@ if __name__ == '__main__':
         train_dataset = tf.placeholder(tf.int32, shape=[batch_size])
         train_labels = tf.placeholder(tf.int32, shape=[batch_size, 1])
         valid_dataset = tf.constant(valid_examples, dtype=tf.int32)
-        with tf.device('/gpu:0'):
+        with tf.device('/cpu:0'):
             # Variables.
             embeddings = tf.Variable(tf.random_uniform([vocabulary_size, embedding_size], -1.0, 1.0), 
                                     name = "embeddings")
@@ -249,7 +250,7 @@ if __name__ == '__main__':
             print('Initialized')
         average_loss = 0
         for step in range(num_steps):
-            batch_data, batch_labels = generate_batch(data, batch_size, num_skips, skip_window)
+            batch_data, batch_labels = word2vec.generate_batch(data, batch_size, num_skips, skip_window)
             feed_dict = {train_dataset: batch_data, train_labels: batch_labels}
             _, l = session.run([optimizer, loss], feed_dict=feed_dict)
             average_loss += l
@@ -292,7 +293,7 @@ if __name__ == '__main__':
         plot_only = 100
         low_dim_embs = tsne.fit_transform(final_embeddings[1:plot_only+1, :])
         labels = [reverse_dictionary[i] for i in range(plot_only)]
-        plot_with_labels(low_dim_embs, labels)
+        word2vec.plot_with_labels(low_dim_embs, labels)
 
         # from here, need to take the embedding parameters and then pass them to the next stage of the
         # system - the sentiment analyser
