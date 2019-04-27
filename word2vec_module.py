@@ -333,7 +333,8 @@ if __name__ == '__main__':
     data, count, dictionary, reverse_dictionary = data_preprocess.build_dataset(basedir)
 
     # save the dictionary to file - very important for Data Processor
-    Helper.store_stuff(dictionary, "dictionary.pickle", reverse_dictionary, "reverse_dictionary.pickle")
+    Helper.store_stuff(dictionary, "dictionary.pickle")
+    Helper.store_stuff(reverse_dictionary, "reverse_dictionary.pickle")
     print('Most common words (+UNK)', count[:5])
     print('Sample data', data[:10])
     data_preprocess.batch_tester(data, reverse_dictionary)
