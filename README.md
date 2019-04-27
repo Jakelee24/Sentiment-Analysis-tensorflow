@@ -1,6 +1,6 @@
 # Sentiment-Analysis
 #### Introduction
-In general, Sentiment Analysis is about determining attitudes. Some of the common uses of sentiment analysis are for understanding customer's intent, preferences and feedback. Recent developments in the areas of machine learning, AI, and natural language processing are the driving force behind increasing use of sentiment analysis for a large range of applications.
+Sentiment analysis is contextual mining of text which identifies and extracts subjective information in source material, and helping a business to understand the social sentiment of their brand, product or service while monitoring online conversations.
 
 In this project I create the machine learning model which can classify positive and negative result of the sentence by using word2vec and LSTM. enjoy it 🙂
 
