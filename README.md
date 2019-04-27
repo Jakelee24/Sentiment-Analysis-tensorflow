@@ -1,5 +1,5 @@
 # Sentiment-Analysis
-#### Introduction
+### Introduction
 Sentiment analysis is contextual mining of text which identifies and extracts subjective information in source material, and helping a business to understand the social sentiment of their brand, product or service while monitoring online conversations.
 
 In this project I create the machine learning model which can classify positive and negative result of the sentence by using word2vec and LSTM. enjoy it 🙂
@@ -29,6 +29,9 @@ The following is the project pipline:
 ![](https://github.com/Jakelee24/Sentiment-Analysis/blob/master/Pipline.png?raw=true)
 
 ### Run
+**Notice:**
+Before you start to run this project please make sure to analysis the vocabulary size of training data as following:
+![](https://github.com/Jakelee24/Sentiment-Analysis/blob/master/preprocess.png?raw=true)
 
 Once you prepared the training data, you can simply by execute the **example.py** to run the whole pipline.
 ```shell
